@@ -34,14 +34,14 @@
             <ul class="entries">
                 {% for entry in entries %}
                     <li class="entry">
-                        <h2 id="{{ entry.id }}">{{ entry.title }}</h2>
+                        <h2 id="{{ entry.post_id }}">{{ entry.title }}</h2>
                         {{ entry.text|safe }}
                     </li>
                 {% else %}
                     <li><em>No entries yet. Add some!</em></li>
                 {% endfor %}
             </ul>
-            
+
         </div>
 
         <script src="//code.jquery.com/jquery-2.2.4.min.js"></script>

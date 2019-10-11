@@ -1,14 +1,15 @@
 import unittest
 import os
-import tempfile
 import json
-import app
+from app import app, db
+
+TEST_DB = 'test_db'
 
 class BasicTestCase(unittest.TestCase):
     
     def test_index(self):
         """Initial test: Ensure flask was set up correctly"""
-        tester = app.app.test_client(self)
+        tester = app.test_client(self)
         response = tester.get('/', content_type = 'html/text')
         self.assertEqual(response.status_code, 200)
 
@@ -21,10 +22,9 @@ class FlaskrTestCase(unittest.TestCase):
 
     def setUp(self):
         """ Set up a blank temp database before each test. """
-        self.db_fd, app.app.config['DATABASE'] = tempfile.mkstemp()
-        app.app.config['DEBUG'] = True
-        self.app = app.app.test_client()
-        app.init_db()
+        basedir = os.path.abspath(os.path.dirname(__file__))
+        app.config['TESTING'] = True
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + 
     
     def tearDown(self):
         """ Destroy blank template database after each test """
