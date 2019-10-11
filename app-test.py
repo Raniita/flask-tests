@@ -1,6 +1,7 @@
 import unittest
 import os
 import tempfile
+import json
 import app
 
 class BasicTestCase(unittest.TestCase):
@@ -45,7 +46,7 @@ class FlaskrTestCase(unittest.TestCase):
     def test_empty_db(self):
         """ Ensure database is blank. """
         rv = self.app.get('/')
-        assert b'No entries so far' in rv.data
+        assert b'No entries yet. Add some!' in rv.data
 
     def test_login_logout(self):
         """ Test login and logout using helper functions """
@@ -80,6 +81,12 @@ class FlaskrTestCase(unittest.TestCase):
         assert b'No entries here so far' not in rv.data
         assert b'&lt;Hello&gt;' in rv.data
         assert b'<strong>HTML</strong> allowed here' in rv.data
+
+    def test_delete_message(self):
+        """ Ensure the messages are being deleted. """
+        rv = self.app.get('/delete/1')
+        data = json.loads((rv.data).decode('utf-8'))
+        self.assertEqual(data['status'],1)
 
 if __name__ == '__main__':
     unittest.main()
