@@ -1,4 +1,5 @@
 import os
+
 from flask import Flask, request, session, g, redirect, url_for, \
     abort, render_template, flash, jsonify
 from flask_sqlalchemy import SQLAlchemy
@@ -20,6 +21,7 @@ DATABASE_PATH = os.path.join(basedir, DATABASE)
 SQLALCHEMY_DATABASE_URI = 'sqlite:///' + DATABASE_PATH
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+# create app
 app = Flask(__name__)
 app.config.from_object(__name__)
 db = SQLAlchemy(app)
@@ -78,6 +80,14 @@ def delete_entry(post_id):
     except Exception as e:
         result = {'status': 0, 'message': repr(e)}
     return jsonify(result)
+
+@app.route('/search/', methods=['GET'])
+def search():
+    query = request.args.get('query')
+    entries = db.session.query(models.Flaskr)
+    if query:
+        return render_template('search.html', entries=entries, query=query)
+    return render_template('search.html')
 
 
 if __name__ == '__main__':

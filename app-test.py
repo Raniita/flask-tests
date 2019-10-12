@@ -24,12 +24,14 @@ class FlaskrTestCase(unittest.TestCase):
         """ Set up a blank temp database before each test. """
         basedir = os.path.abspath(os.path.dirname(__file__))
         app.config['TESTING'] = True
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + 
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' +  \
+            os.path.join(basedir, TEST_DB)
+        self.app = app.test_client()
+        db.create_all()
     
     def tearDown(self):
         """ Destroy blank template database after each test """
-        os.close(self.db_fd)
-        os.unlink(app.app.config['DATABASE'])
+        db.drop_all()
 
     def login(self, username, password):
         """ Login helper function """
@@ -51,28 +53,28 @@ class FlaskrTestCase(unittest.TestCase):
     def test_login_logout(self):
         """ Test login and logout using helper functions """
         rv = self.login(
-            app.app.config['USERNAME'],
-            app.app.config['PASSWORD']
+            app.config['USERNAME'],
+            app.config['PASSWORD']
         )
         assert b'You were logged in' in rv.data
         rv = self.logout()
         assert b'You were logged out' in rv.data
         rv = self.login(
-            app.app.config['USERNAME'] + 'x',
-            app.app.config['PASSWORD']
+            app.config['USERNAME'] + 'x',
+            app.config['PASSWORD']
         )
         assert b'Invalid username' in rv.data
         rv = self.login(
-            app.app.config['USERNAME'],
-            app.app.config['PASSWORD'] + 'x'
+            app.config['USERNAME'],
+            app.config['PASSWORD'] + 'x'
         )
         assert b'Invalid password' in rv.data
 
     def test_messages(self):
         """Ensure that a user can post messages """
         self.login(
-            app.app.config['USERNAME'],
-            app.app.config['PASSWORD']
+            app.config['USERNAME'],
+            app.config['PASSWORD']
         )
         rv = self.app.post('/add', data=dict(
             title='<Hello>',

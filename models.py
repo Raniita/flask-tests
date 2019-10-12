@@ -7,7 +7,7 @@ class Flaskr(db.Model):
     title = db.Column(db.String, nullable=False)
     text = db.Column(db.String, nullable=False)
 
-    def __init__(self, titlte, text):
+    def __init__(self, title, text):
         self.title = title
         self.text = text
 
